@@ -4,6 +4,8 @@ A production-oriented full-stack application for managing warehouse inventory an
 
 The application supports warehouse management, stock transfer requests, transfer approval and completion workflows, inventory updates, validation, transfer history, and operational dashboard metrics.
 
+**Live Application:** [https://your-deployed-app-url.vercel.app](https://your-deployed-app-url.vercel.app)
+
 ## Stack
 
 - Frontend: React + Vite + TypeScript
@@ -184,11 +186,11 @@ The application is seeded with the following warehouses:
 2. Click **Add Warehouse**.
 3. Enter:
 
-\`\`\`
+```
 Name: Chennai Warehouse
 Location: Chennai
 Stock: 100
-\`\`\`
+```
 
 4. Click **Create Warehouse**.
 5. Verify that the warehouse appears in the warehouse list.
@@ -201,20 +203,20 @@ Expected Result: The warehouse is created successfully and its stock is displaye
 2. Click **New Transfer**.
 3. Enter:
 
-\`\`\`
+```
 Source: Bangalore Central
 Destination: Mysore Warehouse
 Quantity: 50
 Notes: Inventory replenishment
-\`\`\`
+```
 
 4. Click **Create Transfer**.
 
 Expected Result:
 
-\`\`\`
+```
 Transfer Status: PENDING
-\`\`\`
+```
 
 The transfer appears in the transfer history.
 
@@ -225,9 +227,9 @@ The transfer appears in the transfer history.
 
 Expected Result:
 
-\`\`\`
+```
 PENDING → APPROVED
-\`\`\`
+```
 
 Warehouse stock remains unchanged during approval.
 
@@ -238,25 +240,25 @@ Warehouse stock remains unchanged during approval.
 
 Before completion:
 
-\`\`\`
+```
 Bangalore Central = 500
 Mysore Warehouse  = 250
-\`\`\`
+```
 
 After completing a transfer of 50 units:
 
-\`\`\`
+```
 Bangalore Central = 450
 Mysore Warehouse  = 300
-\`\`\`
+```
 
 Expected Result:
 
-\`\`\`
+```
 Transfer Status: COMPLETED
 Source stock decreases by 50
 Destination stock increases by 50
-\`\`\`
+```
 
 The source and destination stock updates are performed atomically using a database transaction.
 
@@ -264,20 +266,19 @@ The source and destination stock updates are performed atomically using a databa
 
 1. Create another transfer:
 
-\`\`\`
 Source: Bangalore Central
 Destination: Hyderabad Warehouse
 Quantity: 20
-\`\`\`
+
 
 2. Keep the transfer in `PENDING` state.
 3. Click **Cancel**.
 
 Expected Result:
 
-\`\`\`
+```
 PENDING → CANCELLED
-\`\`\`
+```
 
 Warehouse stock remains unchanged after cancellation.
 
@@ -285,17 +286,17 @@ Warehouse stock remains unchanged after cancellation.
 
 Attempt to create a transfer using:
 
-\`\`\`
+```
 Source: Bangalore Central
 Destination: Bangalore Central
 Quantity: 50
-\`\`\`
+```
 
 Expected Result: The request is rejected with:
 
-\`\`\`
+```
 Source and destination warehouses must be different.
-\`\`\`
+```
 
 No transfer is created.
 
@@ -303,11 +304,11 @@ No transfer is created.
 
 Attempt to create a transfer with a quantity greater than the available source stock:
 
-\`\`\`
+```
 Source: Bangalore Central
 Destination: Mysore Warehouse
 Quantity: 999999
-\`\`\`
+```
 
 Attempt to approve the transfer.
 
