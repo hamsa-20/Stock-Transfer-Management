@@ -282,11 +282,4 @@ After deployment, update the backend `CLIENT_URL` to the Vercel URL.
 - API errors are returned in a predictable `{ message }` format.
 - The health endpoint can be used by deployment monitoring.
 
-## GitHub submission checklist
 
-- [ ] Push source code to GitHub.
-- [ ] Add live frontend URL.
-- [ ] Add deployed API health URL.
-- [ ] Confirm database migrations run successfully.
-- [ ] Test the complete transfer flow on production.
-- [ ] Add screenshots to the GitHub README if desired.
