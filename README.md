@@ -132,7 +132,7 @@ Set:
 VITE_API_URL="http://localhost:5000/api"
 ```
 
-## Sample usage / test flow
+<!-- ## Sample usage / test flow
 
 The seed creates three warehouses:
 
@@ -162,7 +162,246 @@ Sample stock:
    - transfer becomes `COMPLETED`
 10. Try completing the same transfer again. The API rejects it because completed transfers cannot be completed twice.
 11. Try creating a transfer where source and destination are the same. Validation rejects it.
-12. Try completing a transfer whose source stock is insufficient. The transaction rejects it without partially updating either warehouse.
+12. Try completing a transfer whose source stock is insufficient. The transaction rejects it without partially updating either warehouse. -->
+
+## Sample Usage / Test Flow
+
+The following test flow demonstrates the main functionality, business rules, validation, and inventory updates supported by the application.
+
+### Seed Data
+
+The application is seeded with the following warehouses:
+
+| Warehouse | Location | Initial Stock |
+|---|---|---:|
+| Bangalore Central | Bangalore | 500 |
+| Mysore Warehouse | Mysore | 250 |
+| Hyderabad Warehouse | Hyderabad | 350 |
+
+### 1. Create a Warehouse
+
+1. Open the **Warehouses** page.
+2. Click **Add Warehouse**.
+3. Enter:
+
+\`\`\`text
+Name: Chennai Warehouse
+Location: Chennai
+Stock: 100
+\`\`\`
+
+4. Click **Create Warehouse**.
+5. Verify that the warehouse appears in the warehouse list.
+
+Expected Result: The warehouse is created successfully and its stock is displayed correctly.
+
+### 2. Create a Stock Transfer
+
+1. Open the **Transfers** page.
+2. Click **New Transfer**.
+3. Enter:
+
+\`\`\`text
+Source: Bangalore Central
+Destination: Mysore Warehouse
+Quantity: 50
+Notes: Inventory replenishment
+\`\`\`
+
+4. Click **Create Transfer**.
+
+Expected Result:
+
+\`\`\`text
+Transfer Status: PENDING
+\`\`\`
+
+The transfer appears in the transfer history.
+
+### 3. Approve the Transfer
+
+1. Find the newly created transfer.
+2. Click **Approve**.
+
+Expected Result:
+
+\`\`\`text
+PENDING → APPROVED
+\`\`\`
+
+Warehouse stock remains unchanged during approval.
+
+### 4. Complete the Transfer
+
+1. Open the approved transfer.
+2. Click **Complete**.
+
+Before completion:
+
+\`\`\`text
+Bangalore Central = 500
+Mysore Warehouse  = 250
+\`\`\`
+
+After completing a transfer of 50 units:
+
+\`\`\`text
+Bangalore Central = 450
+Mysore Warehouse  = 300
+\`\`\`
+
+Expected Result:
+
+\`\`\`text
+Transfer Status: COMPLETED
+Source stock decreases by 50
+Destination stock increases by 50
+\`\`\`
+
+The source and destination stock updates are performed atomically using a database transaction.
+
+### 5. Cancel a Transfer
+
+1. Create another transfer:
+
+\`\`\`text
+Source: Bangalore Central
+Destination: Hyderabad Warehouse
+Quantity: 20
+\`\`\`
+
+2. Keep the transfer in `PENDING` state.
+3. Click **Cancel**.
+
+Expected Result:
+
+\`\`\`text
+PENDING → CANCELLED
+\`\`\`
+
+Warehouse stock remains unchanged after cancellation.
+
+### 6. Validate Same Source and Destination
+
+Attempt to create a transfer using:
+
+\`\`\`text
+Source: Bangalore Central
+Destination: Bangalore Central
+Quantity: 50
+\`\`\`
+
+Expected Result: The request is rejected with:
+
+\`\`\`text
+Source and destination warehouses must be different.
+\`\`\`
+
+No transfer is created.
+
+### 7. Validate Insufficient Stock
+
+Attempt to create a transfer with a quantity greater than the available source stock:
+
+\`\`\`text
+Source: Bangalore Central
+Destination: Mysore Warehouse
+Quantity: 999999
+\`\`\`
+
+Attempt to approve the transfer.
+
+Expected Result: The request is rejected with an insufficient stock error. The transfer remains `PENDING` and warehouse stock remains unchanged.
+
+### 8. Validate Invalid Status Transitions
+
+After completing a transfer, attempt to complete the same transfer again.
+
+Expected Result: The API rejects the request because a `COMPLETED` transfer cannot be completed again. Cancelled transfers cannot be completed, and invalid status transitions are rejected by the backend.
+
+### 9. Verify Transfer History
+
+Open the **Transfers** page and verify that each transfer displays:
+
+- Source warehouse
+- Destination warehouse
+- Quantity
+- Status
+- Notes
+- Created date
+- Completion date when applicable
+
+The transfer history should contain transfers with statuses such as:
+
+\`\`\`text
+PENDING
+APPROVED
+COMPLETED
+CANCELLED
+\`\`\`
+
+### 10. Verify Dashboard
+
+Open the **Dashboard** and verify:
+
+- Total warehouse count
+- Total stock across warehouses
+- Pending transfers
+- Approved transfers
+- Completed transfers
+- Cancelled transfers
+- Recent transfer activity
+
+Dashboard statistics should remain consistent with the warehouse and transfer data.
+
+### End-to-End Successful Transfer Flow
+
+\`\`\`text
+Create Warehouse
+       ↓
+Create Transfer
+       ↓
+    PENDING
+       ↓
+    APPROVE
+       ↓
+   APPROVED
+       ↓
+   COMPLETE
+       ↓
+  COMPLETED
+       ↓
+Update Source Stock
+       ↓
+Update Destination Stock
+\`\`\`
+
+### Cancellation Flow
+
+\`\`\`text
+Create Transfer
+       ↓
+    PENDING
+       ↓
+     CANCEL
+       ↓
+   CANCELLED
+       ↓
+No Stock Change
+\`\`\`
+
+### Validation Flow
+
+\`\`\`text
+Invalid Request
+       ↓
+Server-side Validation
+       ↓
+Request Rejected
+       ↓
+No Invalid Database Update
+\`\`\`
+
 
 ## API
 
