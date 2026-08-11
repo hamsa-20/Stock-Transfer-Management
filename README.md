@@ -4,7 +4,7 @@ A production-oriented full-stack application for managing warehouse inventory an
 
 The application supports warehouse management, stock transfer requests, transfer approval and completion workflows, inventory updates, validation, transfer history, and operational dashboard metrics.
 
-**Live Application:** [https://your-deployed-app-url.vercel.app](https://your-deployed-app-url.vercel.app)
+**Live Application:** [https://stock-transfer-management.vercel.app/](https://stock-transfer-management.vercel.app/)
 
 ## Stack
 
