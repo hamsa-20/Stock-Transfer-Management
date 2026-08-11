@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransferStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+  CANCELLED
+}
+
+model Warehouse {
+  id                String     @id @default(uuid())
+  name              String     @unique
+  location          String
+  stock             Int        @default(0)
+  outgoingTransfers Transfer[] @relation("SourceWarehouse")
+  incomingTransfers Transfer[] @relation("DestinationWarehouse")
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@index([location])
+}
+
+model Transfer {
+  id                   String         @id @default(uuid())
+  sourceWarehouseId    String
+  destinationWarehouseId String
+  quantity             Int
+  status               TransferStatus @default(PENDING)
+  notes                String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  completedAt          DateTime?
+
+  sourceWarehouse      Warehouse      @relation("SourceWarehouse", fields: [sourceWarehouseId], references: [id])
+  destinationWarehouse Warehouse      @relation("DestinationWarehouse", fields: [destinationWarehouseId], references: [id])
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([sourceWarehouseId])
+  @@index([destinationWarehouseId])
+}

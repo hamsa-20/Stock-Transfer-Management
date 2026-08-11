@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "Stock Transfer API",
+    "_postman_id": "stock-transfer-demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    }
+  ],
+  "item": [
+    {
+      "name": "List warehouses",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/warehouses"
+      }
+    },
+    {
+      "name": "List transfers",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/transfers"
+      }
+    },
+    {
+      "name": "Create transfer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"sourceWarehouseId\":\"<source-id>\",\"destinationWarehouseId\":\"<destination-id>\",\"quantity\":50,\"notes\":\"Restocking\"}"
+        },
+        "url": "{{baseUrl}}/transfers"
+      }
+    },
+    {
+      "name": "Approve transfer",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"APPROVED\"}"
+        },
+        "url": "{{baseUrl}}/transfers/<transfer-id>/status"
+      }
+    },
+    {
+      "name": "Complete transfer",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"COMPLETED\"}"
+        },
+        "url": "{{baseUrl}}/transfers/<transfer-id>/status"
+      }
+    }
+  ]
+}
