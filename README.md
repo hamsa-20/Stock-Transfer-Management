@@ -184,7 +184,7 @@ The application is seeded with the following warehouses:
 2. Click **Add Warehouse**.
 3. Enter:
 
-\`\`\`text
+\`\`\`
 Name: Chennai Warehouse
 Location: Chennai
 Stock: 100
@@ -201,7 +201,7 @@ Expected Result: The warehouse is created successfully and its stock is displaye
 2. Click **New Transfer**.
 3. Enter:
 
-\`\`\`text
+\`\`\`
 Source: Bangalore Central
 Destination: Mysore Warehouse
 Quantity: 50
@@ -212,7 +212,7 @@ Notes: Inventory replenishment
 
 Expected Result:
 
-\`\`\`text
+\`\`\`
 Transfer Status: PENDING
 \`\`\`
 
@@ -225,7 +225,7 @@ The transfer appears in the transfer history.
 
 Expected Result:
 
-\`\`\`text
+\`\`\`
 PENDING → APPROVED
 \`\`\`
 
@@ -238,21 +238,21 @@ Warehouse stock remains unchanged during approval.
 
 Before completion:
 
-\`\`\`text
+\`\`\`
 Bangalore Central = 500
 Mysore Warehouse  = 250
 \`\`\`
 
 After completing a transfer of 50 units:
 
-\`\`\`text
+\`\`\`
 Bangalore Central = 450
 Mysore Warehouse  = 300
 \`\`\`
 
 Expected Result:
 
-\`\`\`text
+\`\`\`
 Transfer Status: COMPLETED
 Source stock decreases by 50
 Destination stock increases by 50
@@ -264,7 +264,7 @@ The source and destination stock updates are performed atomically using a databa
 
 1. Create another transfer:
 
-\`\`\`text
+\`\`\`
 Source: Bangalore Central
 Destination: Hyderabad Warehouse
 Quantity: 20
@@ -275,7 +275,7 @@ Quantity: 20
 
 Expected Result:
 
-\`\`\`text
+\`\`\`
 PENDING → CANCELLED
 \`\`\`
 
@@ -285,7 +285,7 @@ Warehouse stock remains unchanged after cancellation.
 
 Attempt to create a transfer using:
 
-\`\`\`text
+\`\`\`
 Source: Bangalore Central
 Destination: Bangalore Central
 Quantity: 50
@@ -293,7 +293,7 @@ Quantity: 50
 
 Expected Result: The request is rejected with:
 
-\`\`\`text
+\`\`\`
 Source and destination warehouses must be different.
 \`\`\`
 
@@ -303,7 +303,7 @@ No transfer is created.
 
 Attempt to create a transfer with a quantity greater than the available source stock:
 
-\`\`\`text
+\`\`\`
 Source: Bangalore Central
 Destination: Mysore Warehouse
 Quantity: 999999
@@ -333,7 +333,7 @@ Open the **Transfers** page and verify that each transfer displays:
 
 The transfer history should contain transfers with statuses such as:
 
-\`\`\`text
+\'\'\'
 PENDING
 APPROVED
 COMPLETED
@@ -354,9 +354,9 @@ Open the **Dashboard** and verify:
 
 Dashboard statistics should remain consistent with the warehouse and transfer data.
 
-### End-to-End Successful Transfer Flow
+<!-- ### End-to-End Successful Transfer Flow
 
-\`\`\`text
+
 Create Warehouse
        ↓
 Create Transfer
@@ -400,7 +400,40 @@ Server-side Validation
 Request Rejected
        ↓
 No Invalid Database Update
-\`\`\`
+\`\`\` -->
+
+### End-to-End Successful Transfer Flow
+
+```mermaid
+flowchart TD
+    A[Create Warehouse] --> B[Create Transfer]
+    B --> C[PENDING]
+    C --> D[Approve]
+    D --> E[APPROVED]
+    E --> F[Complete]
+    F --> G[COMPLETED]
+    G --> H[Update Source Stock]
+    H --> I[Update Destination Stock]
+```
+
+### Cancellation Flow
+
+```mermaid
+flowchart TD
+    A[Create Transfer] --> B[PENDING]
+    B --> C[Cancel]
+    C --> D[CANCELLED]
+    D --> E[No Stock Change]
+```
+
+### Validation Flow
+
+```mermaid
+flowchart TD
+    A[Invalid Request] --> B[Server-side Validation]
+    B --> C[Request Rejected]
+    C --> D[No Invalid Database Update]
+```
 
 
 ## API
