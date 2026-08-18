@@ -545,16 +545,6 @@ VITE_API_URL=https://<your-render-service>.onrender.com/api
 
 After deployment, update the backend `CLIENT_URL` to the Vercel URL.
 
-## Production notes
 
-- `helmet` adds secure HTTP headers.
-- `express-rate-limit` protects API endpoints from excessive requests.
-- Zod validates all write payloads.
-- CORS is restricted to the configured frontend URL.
-- Prisma transactions keep completion atomic.
-- PostgreSQL row locks protect source/destination stock during completion.
-- Database constraints prevent negative stock and duplicate warehouse names.
-- API errors are returned in a predictable `{ message }` format.
-- The health endpoint can be used by deployment monitoring.
 
 
